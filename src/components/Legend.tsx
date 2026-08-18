@@ -39,22 +39,24 @@ export function Legend({ blocks, activeIndex, now }: LegendProps) {
         </div>
       )}
 
-      <div className="flex flex-col gap-2 overflow-y-auto min-h-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {upcoming.map(({ block, index }) => (
-          <div
-            key={block.id}
-            className="flex items-center gap-2 border rounded-sm p-2 text-sm opacity-60 shrink-0"
-          >
-            <span
-              className="w-4 h-4 rounded-sm shrink-0 border"
-              style={{ backgroundColor: block.color }}
-            />
-            <span className="truncate">{blockName(block, index)}</span>
-            <span className="counter ml-auto shrink-0 text-sm">
-              {formatTime(block.start)}
-            </span>
-          </div>
-        ))}
+      <div className="border rounded-sm p-2 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden h-[calc(3*2.5rem+2*0.5rem)]">
+        <div className="flex flex-col gap-2">
+          {upcoming.map(({ block, index }) => (
+            <div
+              key={block.id}
+              className="flex items-center gap-2 border rounded-sm p-2 text-sm opacity-60 shrink-0 h-10"
+            >
+              <span
+                className="w-4 h-4 rounded-sm shrink-0 border"
+                style={{ backgroundColor: block.color }}
+              />
+              <span className="truncate">{blockName(block, index)}</span>
+              <span className="counter ml-auto shrink-0 text-sm">
+                {formatTime(block.start)}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
