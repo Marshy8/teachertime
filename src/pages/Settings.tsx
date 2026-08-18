@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Block } from "../components/Block";
-import { isValidDuration, type BlockData } from "../data/BlockData";
+import {
+  createBlock,
+  durationToMinutes,
+  isValidDuration,
+  type BlockData,
+} from "../data/BlockData";
 import {
   DndContext,
   closestCenter,
@@ -15,40 +20,17 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 
-export function Settings() {
-  const [blocks, setBlocks] = useState<BlockData[]>([
-    {
-      id: crypto.randomUUID(),
-      name: "",
-      color: "#2173c0",
-      duration: "",
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "",
-      color: "#13d443",
-      duration: "",
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "",
-      color: "#df7f11",
-      duration: "",
-    },
-  ]);
+type SettingsProps = {
+  blocks: BlockData[];
+  setBlocks: (blocks: BlockData[]) => void;
+};
+
+export function Settings({ blocks, setBlocks }: SettingsProps) {
+  const navigate = useNavigate();
   const sensors = useSensors(useSensor(PointerSensor));
 
   function addBlock() {
-    setBlocks([
-      ...blocks,
-      {
-        id: crypto.randomUUID(),
-        name: "",
-        color:
-          "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0"),
-        duration: "",
-      },
-    ]);
+    setBlocks([...blocks, createBlock()]);
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -63,12 +45,8 @@ export function Settings() {
   function calculateTime(inputs: string[]): string {
     let totalMin: number = 0;
 
-    for (let input of inputs) {
-      if (input != "") {
-        let hour = input.split(":")[0];
-        let minute = input.split(":")[1];
-        totalMin += parseInt(hour, 10) * 60 + parseInt(minute, 10);
-      }
+    for (const input of inputs) {
+      totalMin += durationToMinutes(input);
     }
 
     let hour: string = Math.floor(totalMin / 60).toString();
@@ -83,6 +61,11 @@ export function Settings() {
     return `${hour}:${minute}`;
   }
 
+  const validDurations = blocks
+    .filter((b) => isValidDuration(b.duration))
+    .map((b) => b.duration);
+  const hasSchedule = validDurations.some((d) => durationToMinutes(d) > 0);
+
   return (
     <div className="flex flex-col h-dvh overflow-hidden w-full items-center">
       <label className="shrink-0 text-2xl py-5 font-extrabold">
@@ -91,12 +74,7 @@ export function Settings() {
 
       <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center gap-2">
         <span className="counter">
-          Total Minutes:{" "}
-          {calculateTime(
-            blocks
-              .filter((b) => isValidDuration(b.duration))
-              .map((b) => b.duration),
-          )}
+          Total Minutes: {calculateTime(validDurations)}
         </span>
 
         <DndContext
@@ -138,7 +116,11 @@ export function Settings() {
           >
             Add Block
           </button>
-          <button className="text-sm shrink-0 text-blue-500 hover:text-blue-300 border rounded-sm p-1">
+          <button
+            className="text-sm shrink-0 text-blue-500 hover:text-blue-300 border rounded-sm p-1 disabled:text-gray-400 disabled:hover:text-gray-400"
+            disabled={!hasSchedule}
+            onClick={() => navigate("/clock")}
+          >
             Submit
           </button>
         </div>
