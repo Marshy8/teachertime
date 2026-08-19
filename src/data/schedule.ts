@@ -45,11 +45,38 @@ function nextHour(ms: number): number {
 }
 
 /**
+ * Resolves the `HH:MM` value of an `<input type="time">` to an absolute instant
+ * on `reference`'s day. A blank input means "start now", so it returns
+ * `reference` unchanged. Built with setHours rather than epoch arithmetic for
+ * the same reason floorToHour is: half-hour timezones and DST.
+ */
+export function resolveStart(
+  time: string,
+  reference: number = Date.now(),
+): number {
+  const match = /^(\d{2}):(\d{2})$/.exec(time);
+  if (match === null) return reference;
+
+  const d = new Date(reference);
+  d.setHours(Number(match[1]), Number(match[2]), 0, 0);
+  return d.getTime();
+}
+
+/**
  * Lays the blocks end to end starting at `start`, then cuts that timeline at
  * wall-clock hour boundaries so each clock face covers exactly one hour. A block
  * that straddles a boundary yields a wedge on both faces.
+ *
+ * `from` is the earliest hour that should get a face, for a schedule that hasn't
+ * begun yet: the hours between it and `start` come out as faces with no wedges,
+ * so the carousel can sit on the real current hour and let the first block hour
+ * arrive from the upcoming slot. Defaults to `start`, i.e. no lead-in.
  */
-export function buildSchedule(blocks: BlockData[], start: number): Schedule {
+export function buildSchedule(
+  blocks: BlockData[],
+  start: number,
+  from: number = start,
+): Schedule {
   const scheduled: ScheduledBlock[] = [];
   let cursor = start;
 
@@ -73,7 +100,7 @@ export function buildSchedule(blocks: BlockData[], start: number): Schedule {
   if (scheduled.length > 0) {
     const lastHour = floorToHour(end - 1);
     for (
-      let hourStart = floorToHour(start);
+      let hourStart = floorToHour(Math.min(start, from));
       hourStart <= lastHour;
       hourStart = nextHour(hourStart)
     ) {
@@ -107,6 +134,30 @@ export function clockIndexAt(schedule: Schedule, now: number): number {
     if (now < nextHour(clocks[i].hourStart)) return i;
   }
   return clocks.length - 1;
+}
+
+/** True when `now` falls inside the hour this face covers. */
+export function containsTime(clock: ClockHour, now: number): boolean {
+  return now >= clock.hourStart && now < nextHour(clock.hourStart);
+}
+
+/**
+ * This face's wedges with everything before `now` trimmed off, so the color a
+ * child sees is always time still to come. Elapsed minutes of the running block
+ * shrink away behind the hand, a block that has already finished disappears,
+ * and a face whose hour is over comes back empty. Faces in the future are
+ * untouched.
+ */
+export function remainingWedges(clock: ClockHour, now: number): Wedge[] {
+  if (now <= clock.hourStart) return clock.wedges;
+  if (now >= nextHour(clock.hourStart)) return [];
+
+  const elapsed = ((now - clock.hourStart) / MS_PER_MINUTE) * 6;
+  return clock.wedges
+    .filter((wedge) => wedge.endAngle > elapsed)
+    .map((wedge) =>
+      wedge.startAngle >= elapsed ? wedge : { ...wedge, startAngle: elapsed },
+    );
 }
 
 /** Index of the block running at `now`, or -1 if the schedule isn't running. */
