@@ -13,13 +13,13 @@ export function FinishedModal({
         <span className="text-2xl font-extrabold">Finished</span>
         <div className="flex gap-2">
           <button
-            className="text-sm text-blue-500 hover:text-blue-300 border rounded-sm p-1"
+            className="text-sm text-gray-500 hover:text-gray-300 border rounded-sm p-1"
             onClick={onClose}
           >
             Close
           </button>
           <button
-            className="text-sm text-green-500 hover:text-green-300 border rounded-sm p-1"
+            className="text-sm text-blue-500 hover:text-blue-300 border rounded-sm p-1"
             onClick={onBackToSettings}
           >
             Back to Settings

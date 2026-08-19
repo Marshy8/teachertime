@@ -10,24 +10,33 @@ import chimeUrl from "../assets/chime.mp3";
 
 type ClockProps = {
   blocks: BlockData[];
+  /** Absolute instant the schedule runs from, resolved by Settings on Submit. */
+  start: number;
 };
 
-export function Clock({ blocks }: ClockProps) {
+export function Clock({ blocks, start }: ClockProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const now = useNow();
 
-  // The schedule is pinned to the moment this page opened, not to every tick.
-  const [startedAt] = useState(() => Date.now());
+  // Pads the carousel back to the hour this page opened in, so a schedule that
+  // hasn't begun yet still shows the real current hour as an empty face. Pinned
+  // rather than tracking `now` so the lead-in faces don't get trimmed away as
+  // the hours pass — this only sets how far back the carousel reaches, never
+  // when the schedule runs.
+  const [openedAt] = useState(() => Date.now());
+  // `start` is already an absolute instant, so this can't slide as time passes.
   const schedule = useMemo(
-    () => buildSchedule(blocks, startedAt),
-    [blocks, startedAt],
+    () => buildSchedule(blocks, start, openedAt),
+    [blocks, start, openedAt],
   );
 
   const isEmpty = schedule.blocks.length === 0;
   const isFinished = !isEmpty && now >= schedule.end;
   const [dismissedFinish, setDismissedFinish] = useState(false);
-  const hasChimed = useRef(false);
+  // A start time far enough in the past that the day is already over shouldn't
+  // chime on arrival — only a schedule that finishes while we're watching does.
+  const hasChimed = useRef(isFinished);
 
   useEffect(() => {
     if (!isFinished || hasChimed.current) return;
@@ -76,7 +85,7 @@ export function Clock({ blocks }: ClockProps) {
             className="text-sm text-blue-500 hover:text-blue-300 border rounded-sm p-1"
             onClick={goBack}
           >
-            back
+            Back
           </button>
         </div>
       </div>

@@ -1,5 +1,10 @@
 import { ClockFace } from "./ClockFace";
-import { formatTime, type ClockHour } from "../data/schedule";
+import {
+  containsTime,
+  formatTime,
+  remainingWedges,
+  type ClockHour,
+} from "../data/schedule";
 
 type ClockCarouselProps = {
   clocks: ClockHour[];
@@ -9,10 +14,12 @@ type ClockCarouselProps = {
 };
 
 /**
- * Shows three faces at a time: the previous hour shrunk on the left, the current
- * hour large in the centre, the next hour shrunk on the right. Every face is
- * always mounted and positioned by its offset from `index`, so advancing the
- * index slides the whole row across.
+ * Shows the current hour large in the centre and the next hour shrunk on the
+ * right. Hours that have already passed are left mounted but hidden, so they
+ * still slide off to the left and fade as the row advances rather than popping
+ * out — but a child is never shown an hour that's over. Every face is
+ * positioned by its offset from `index`, so advancing the index slides the
+ * whole row across.
  */
 export function ClockCarousel({ clocks, index, now }: ClockCarouselProps) {
   return (
@@ -20,7 +27,8 @@ export function ClockCarousel({ clocks, index, now }: ClockCarouselProps) {
       {clocks.map((clock, i) => {
         const offset = i - index;
         const isCurrent = offset === 0;
-        const isVisible = Math.abs(offset) <= 1;
+        // Past hours stay in the DOM to animate out, but never stay on screen.
+        const isVisible = offset >= 0 && offset <= 1;
 
         return (
           <div
@@ -37,8 +45,14 @@ export function ClockCarousel({ clocks, index, now }: ClockCarouselProps) {
             <div className="h-full flex flex-col items-center gap-1">
               <div className="flex-1 min-h-0 aspect-square">
                 <ClockFace
-                  wedges={clock.wedges}
-                  now={isCurrent ? now : undefined}
+                  wedges={remainingWedges(clock, now)}
+                  // Centring a face isn't enough to draw hands on it: with a
+                  // start time in the future, or a schedule already over, the
+                  // centre face is the nearest one rather than the one `now`
+                  // actually falls in, and real hands there would mislead.
+                  now={
+                    isCurrent && containsTime(clock, now) ? now : undefined
+                  }
                 />
               </div>
               <span className="counter shrink-0 text-sm">
