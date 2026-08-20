@@ -14,6 +14,30 @@ type ClockProps = {
   start: number;
 };
 
+/**
+ * The legend column on the left and the next-hour column on the right are the
+ * same width, so the column between them — and the clock face centred in it —
+ * lands exactly in the middle of the page.
+ */
+const SIDE_COLUMN = "w-112 max-w-[32%] shrink-0";
+
+function BackButton({
+  onClick,
+  className = "",
+}: {
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      className={`text-sm text-blue-500 hover:text-blue-300 border rounded-sm p-1 ${className}`}
+      onClick={onClick}
+    >
+      Back
+    </button>
+  );
+}
+
 export function Clock({ blocks, start }: ClockProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,42 +77,44 @@ export function Clock({ blocks, start }: ClockProps) {
   }
 
   return (
-    <div className="flex flex-col h-dvh overflow-hidden w-full items-center">
+    // #root is a fixed 1126px column, which is right for Settings but wastes
+    // half a projector on the clock. This page breaks out of it and uses the
+    // whole window, so the face can be as large as the room needs.
+    <div className="flex flex-col h-dvh overflow-hidden items-center w-dvw ml-[calc(50%-50dvw)]">
       <label className="shrink-0 text-2xl py-5 font-extrabold">
         TeacherTime
       </label>
 
-      <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center gap-2 px-2">
-        {isEmpty ? (
-          <span className="my-auto text-sm">
+      {isEmpty ? (
+        <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center gap-2 px-2">
+          <span className="text-sm">
             No blocks with a time set yet — go back and add some.
           </span>
-        ) : (
-          <>
-            <div className="w-full max-w-[min(90vw,60rem)] shrink-0">
-              <ClockCarousel
-                clocks={schedule.clocks}
-                index={clockIndexAt(schedule, now)}
-                now={now}
-              />
-            </div>
+          <BackButton onClick={goBack} />
+        </div>
+      ) : (
+        <div className="flex-1 min-h-0 w-full flex justify-center gap-4 px-4 pb-4">
+          {/* Left column: what's running now, what's still to come, and the
+              way back out. */}
+          <div
+            className={`${SIDE_COLUMN} flex flex-col justify-center gap-2 min-h-0`}
+          >
             <Legend
               blocks={schedule.blocks}
               activeIndex={blockIndexAt(schedule, now)}
               now={now}
             />
-          </>
-        )}
+            <BackButton onClick={goBack} className="self-center shrink-0" />
+          </div>
 
-        <div className="flex justify-between w-full max-w-100 py-2 shrink-0">
-          <button
-            className="text-sm text-blue-500 hover:text-blue-300 border rounded-sm p-1"
-            onClick={goBack}
-          >
-            Back
-          </button>
+          <ClockCarousel
+            clocks={schedule.clocks}
+            index={clockIndexAt(schedule, now)}
+            now={now}
+            sideClassName={SIDE_COLUMN}
+          />
         </div>
-      </div>
+      )}
 
       {isFinished && !dismissedFinish && (
         <FinishedModal

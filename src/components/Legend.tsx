@@ -23,7 +23,7 @@ export function Legend({ blocks, activeIndex, now }: LegendProps) {
     .filter(({ block }) => block.start > now);
 
   return (
-    <div className="w-full max-w-100 flex flex-col gap-2 min-h-0">
+    <div className="w-full flex flex-col gap-2 min-h-0">
       {current && (
         <div className="flex items-center gap-2 border rounded-sm p-2 shrink-0">
           <span
@@ -39,12 +39,12 @@ export function Legend({ blocks, activeIndex, now }: LegendProps) {
         </div>
       )}
 
-      <div className="border rounded-sm p-2 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden h-[calc(3*2.5rem+2*0.5rem)]">
+      <div className="border rounded-sm p-2 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden h-[calc(4*2.75rem+3*0.5rem)]">
         <div className="flex flex-col gap-2">
           {upcoming.map(({ block, index }) => (
             <div
               key={block.id}
-              className="flex items-center gap-2 border rounded-sm p-2 text-sm opacity-60 shrink-0 h-10"
+              className="flex items-center gap-2 border rounded-sm p-2 text-sm opacity-60 shrink-0 h-11"
             >
               <span
                 className="w-4 h-4 rounded-sm shrink-0 border"
