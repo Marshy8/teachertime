@@ -58,17 +58,21 @@ export function InfoModal({ onClose }: InfoModalProps) {
           <ul className="text-sm text-left flex flex-col gap-1 list-disc pl-5">
             <li>
               The big face in the middle is the hour you're in now, with moving
-              hands. The smaller faces beside it are the hours before and after.
+              hands. The smaller face beside it is the hour after.
             </li>
             <li>
               Hands only appear on the hour that's actually happening, so a face
               never shows a time it doesn't cover.
             </li>
             <li>
-              Underneath, the current block counts down and the rest of the day
+              To the left, the current block counts down and the rest of the day
               lists what's coming and when.
             </li>
             <li>A chime plays when the last block ends. Back returns here.</li>
+            <li>
+              Refreshing the clock page also brings you back here - a fresh page
+              has no start time to run from, so press Submit again.
+            </li>
           </ul>
         </div>
 
