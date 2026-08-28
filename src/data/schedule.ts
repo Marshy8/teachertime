@@ -141,25 +141,6 @@ export function containsTime(clock: ClockHour, now: number): boolean {
   return now >= clock.hourStart && now < nextHour(clock.hourStart);
 }
 
-/**
- * This face's wedges with everything before `now` trimmed off, so the color a
- * child sees is always time still to come. Elapsed minutes of the running block
- * shrink away behind the hand, a block that has already finished disappears,
- * and a face whose hour is over comes back empty. Faces in the future are
- * untouched.
- */
-export function remainingWedges(clock: ClockHour, now: number): Wedge[] {
-  if (now <= clock.hourStart) return clock.wedges;
-  if (now >= nextHour(clock.hourStart)) return [];
-
-  const elapsed = ((now - clock.hourStart) / MS_PER_MINUTE) * 6;
-  return clock.wedges
-    .filter((wedge) => wedge.endAngle > elapsed)
-    .map((wedge) =>
-      wedge.startAngle >= elapsed ? wedge : { ...wedge, startAngle: elapsed },
-    );
-}
-
 /** Index of the block running at `now`, or -1 if the schedule isn't running. */
 export function blockIndexAt(schedule: Schedule, now: number): number {
   return schedule.blocks.findIndex((b) => now >= b.start && now < b.end);

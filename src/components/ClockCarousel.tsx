@@ -1,10 +1,5 @@
 import { ClockFace } from "./ClockFace";
-import {
-  containsTime,
-  formatTime,
-  remainingWedges,
-  type ClockHour,
-} from "../data/schedule";
+import { containsTime, formatTime, type ClockHour } from "../data/schedule";
 
 type ClockCarouselProps = {
   clocks: ClockHour[];
@@ -47,7 +42,7 @@ export function ClockCarousel({
           <div className="w-[92%] aspect-square max-h-[92%] flex flex-col items-center gap-1">
             <div className="flex-1 min-h-0 w-full">
               <ClockFace
-                wedges={remainingWedges(current, now)}
+                wedges={current.wedges}
                 // Being the centre face isn't enough to draw hands on it: with
                 // a start time in the future, or a schedule already over, the
                 // centre face is the nearest one rather than the one `now`
@@ -68,7 +63,7 @@ export function ClockCarousel({
           // its column so it sits beside the current face rather than adrift.
           <div className="w-[60%] aspect-square max-h-[45%] flex flex-col items-center gap-1 opacity-35">
             <div className="flex-1 min-h-0 w-full">
-              <ClockFace wedges={remainingWedges(next, now)} />
+              <ClockFace wedges={next.wedges} />
             </div>
             <span className="counter shrink-0 text-sm">
               {formatTime(next.hourStart)}
