@@ -1,15 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#5f278b" />
-      <stop offset="1" stop-color="#412a39" />
-    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16273d"/><stop offset="1" stop-color="#070d16"/></linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#7fdcf7"/><stop offset="1" stop-color="#2f9fd0"/></linearGradient>
   </defs>
-  <rect x="0" y="0" width="64" height="64" rx="14" fill="url(#bg)" />
-  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" fill="none"
-        stroke="#c9a6ef" stroke-opacity="0.4" stroke-width="1.5" />
-  <text x="32" y="35" text-anchor="middle" dominant-baseline="central"
-        font-family="system-ui, 'Segoe UI', Roboto, sans-serif"
-        font-weight="700" font-size="42"
-        fill="#f2ecfa">B</text>
+  <rect width="64" height="64" rx="14" fill="url(#tile)"/>
+  <path fill-rule="nonzero" fill="url(#mark)" d="M29.56 11.5Q37.77 11.5 41.96 13.8Q46.15 16.09 46.15 21.89Q46.15 25.4 44.52 27.81Q42.88 30.22 39.84 30.74L39.84 31.02Q41.91 31.43 43.57 32.46Q45.24 33.49 46.21 35.45Q47.19 37.4 47.19 40.61Q47.19 46.18 43.17 49.34Q39.15 52.5 32.14 52.5L16.81 52.5L16.81 11.5L29.56 11.5ZM30.54 27.75Q34.33 27.75 35.79 26.54Q37.25 25.34 37.25 23.04Q37.25 20.69 35.53 19.65Q33.81 18.62 30.08 18.62L25.48 18.62L25.48 27.75L30.54 27.75ZM25.48 34.64L25.48 45.32L31.17 45.32Q35.07 45.32 36.62 43.8Q38.17 42.28 38.17 39.75Q38.17 37.46 36.59 36.05Q35.01 34.64 30.88 34.64L25.48 34.64Z"/>
+  <rect x=".75" y=".75" width="62.5" height="62.5" rx="13.25" fill="none" stroke="rgba(88,196,232,.34)" stroke-width="1.5"/>
 </svg>
