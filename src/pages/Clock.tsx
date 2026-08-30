@@ -41,7 +41,7 @@ function BackButton({
 export function Clock({ blocks, start }: ClockProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const now = useNow(30_000);
+  const now = useNow(1_000);
 
   // Pads the carousel back to the hour this page opened in, so a schedule that
   // hasn't begun yet still shows the real current hour as an empty face. Pinned
