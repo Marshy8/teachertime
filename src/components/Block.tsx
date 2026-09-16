@@ -31,26 +31,27 @@ export function Block({
       ref={setNodeRef}
       style={style}
     >
-      <span {...attributes} {...listeners}>
+      <span className="shrink-0" {...attributes} {...listeners}>
         ⠿
       </span>{" "}
       <input
         type="color"
+        className="shrink-0"
         value={color}
         onChange={(e) => onChange({ color: e.target.value })}
       />
       <input
         type="text"
         name="name"
-        className="px-2 py-1 text-sm w-25"
+        className="px-2 py-1 text-sm flex-1 min-w-16"
         value={name}
         placeholder="Block Name"
         onChange={(e) => onChange({ name: e.target.value })}
       ></input>
-      <label className="text-sm">Span - </label>
+      <label className="text-sm shrink-0 whitespace-nowrap">Span - </label>
       <input
         type="text"
-        className={`px-2 py-1 text-sm w-15 ${
+        className={`px-2 py-1 text-sm w-15 shrink-0 ${
           durationValid ? "text-green-600" : "text-red-500"
         }`}
         name="duration"
@@ -59,7 +60,7 @@ export function Block({
         onChange={(e) => onChange({ duration: e.target.value })}
       />
       <button
-        className="text-sm text-red-500 hover:text-red-300 border rounded-sm p-1"
+        className="text-sm text-red-500 hover:text-red-300 border rounded-sm p-1 shrink-0"
         onClick={onRemove}
       >
         Remove

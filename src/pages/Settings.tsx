@@ -134,7 +134,7 @@ export function Settings({
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <div className="w-full max-w-100 aspect-square border rounded-sm p-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="w-full max-w-110 aspect-square border rounded-sm p-2">
             <SortableContext
               items={blocks.map((b) => b.id)}
               strategy={verticalListSortingStrategy}
@@ -161,7 +161,7 @@ export function Settings({
           </div>
         </DndContext>
 
-        <div className="grid grid-cols-3 items-center w-full max-w-100 py-2">
+        <div className="grid grid-cols-3 items-center w-full max-w-110 py-2">
           <button
             className="text-sm text-green-500 hover:text-green-300 border rounded-sm p-1 justify-self-start"
             onClick={addBlock}
