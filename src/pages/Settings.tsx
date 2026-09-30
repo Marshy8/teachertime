@@ -24,6 +24,7 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from "@dnd-kit/sortable";
+import { CsvControl } from "../components/CsvControl";
 
 type SettingsProps = {
   blocks: BlockData[];
@@ -96,31 +97,31 @@ export function Settings({
   const hasSchedule = validDurations.some((d) => durationToMinutes(d) > 0);
 
   return (
-    <div className="flex flex-col h-dvh overflow-hidden w-full items-center">
-      <label className="shrink-0 text-2xl py-5 font-extrabold">
+    <div className='flex flex-col h-dvh overflow-hidden w-full items-center'>
+      <label className='shrink-0 text-2xl py-5 font-extrabold'>
         TeacherTime
       </label>
 
-      <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center gap-2">
-        <span className="counter">
+      <div className='flex-1 min-h-0 w-full flex flex-col items-center justify-center gap-2'>
+        <span className='counter'>
           Total Minutes-{" "}
-          <span className="text-green-600">
+          <span className='text-green-600'>
             {calculateTime(validDurations)}
           </span>
         </span>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm" htmlFor="start-time">
+        <div className='flex items-center gap-2'>
+          <label className='text-sm' htmlFor='start-time'>
             Start at
           </label>
           <input
-            id="start-time"
-            type="time"
-            className="px-2 py-1 text-sm border rounded-sm"
+            id='start-time'
+            type='time'
+            className='px-2 py-1 text-sm border rounded-sm'
             value={startTime}
             onChange={(e) => setStartTime(e.target.value)}
           />
-          <span className="text-sm opacity-60">
+          <span className='text-sm opacity-60'>
             {startTime === ""
               ? "leave blank to start now"
               : resolveStart(startTime, now) < now
@@ -134,12 +135,12 @@ export function Settings({
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <div className="w-full max-w-110 aspect-square border rounded-sm p-2">
+          <div className='w-full max-w-110 aspect-square border rounded-sm p-2'>
             <SortableContext
               items={blocks.map((b) => b.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="flex flex-col gap-2">
+              <div className='flex flex-col gap-2'>
                 {blocks.map((b) => (
                   <Block
                     key={b.id}
@@ -161,28 +162,29 @@ export function Settings({
           </div>
         </DndContext>
 
-        <div className="grid grid-cols-3 items-center w-full max-w-110 py-2">
+        <div className='grid grid-cols-3 items-center w-full max-w-110 py-2'>
           <button
-            className="text-sm text-green-500 hover:text-green-300 border rounded-sm p-1 justify-self-start"
+            className='text-sm text-green-500 hover:text-green-300 border rounded-sm p-1 justify-self-start'
             onClick={addBlock}
           >
             Add Block
           </button>
           <button
-            className="text-sm text-pink-500 hover:text-pink-300 border rounded-sm p-1 justify-self-center"
-            aria-label="About TeacherTime"
+            className='text-sm text-pink-500 hover:text-pink-300 border rounded-sm p-1 justify-self-center'
+            aria-label='About TeacherTime'
             onClick={() => setShowInfo(true)}
           >
             ⓘ
           </button>
           <button
-            className="text-sm text-blue-500 hover:text-blue-300 border rounded-sm p-1 disabled:text-gray-400 disabled:hover:text-gray-400 justify-self-end"
+            className='text-sm text-blue-500 hover:text-blue-300 border rounded-sm p-1 disabled:text-gray-400 disabled:hover:text-gray-400 justify-self-end'
             disabled={!hasSchedule}
             onClick={submit}
           >
             Submit
           </button>
         </div>
+        {CsvControl(blocks)}
       </div>
 
       {showInfo && <InfoModal onClose={() => setShowInfo(false)} />}
