@@ -8,6 +8,10 @@ type CsvControlProps = {
   onImport: (blocks: BlockData[]) => void;
 };
 
+function getRandomColor(): string {
+  return "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0");
+}
+
 export function CsvControl({ blocks, onImport }: CsvControlProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -26,9 +30,15 @@ export function CsvControl({ blocks, onImport }: CsvControlProps) {
         }
 
         const importedBlocks: BlockData[] = result.data.map((block) => ({
-          id: String(block.id ?? ""),
+          id:
+            typeof block.id === "string" && block.id.trim() !== ""
+              ? block.id.trim()
+              : crypto.randomUUID(),
           name: String(block.name ?? ""),
-          color: String(block.color ?? ""),
+          color:
+            typeof block.color === "string" && block.color.trim() !== ""
+              ? block.color.trim()
+              : getRandomColor(),
           duration: String(block.duration ?? ""),
         }));
 
