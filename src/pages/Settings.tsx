@@ -52,6 +52,10 @@ export function Settings({
     setBlocks([...blocks, createBlock()]);
   }
 
+  const handleImport = (importedBlocks: BlockData[]) => {
+    setBlocks(importedBlocks);
+  };
+
   /**
    * Pins the schedule to a real instant and saves it. Saving here rather than
    * on every keystroke means a half-edited schedule the teacher walked away
@@ -184,7 +188,7 @@ export function Settings({
             Submit
           </button>
         </div>
-        {CsvControl(blocks)}
+        <CsvControl blocks={blocks} onImport={handleImport} />
       </div>
 
       {showInfo && <InfoModal onClose={() => setShowInfo(false)} />}
