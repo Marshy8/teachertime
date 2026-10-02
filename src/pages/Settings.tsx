@@ -52,7 +52,11 @@ export function Settings({
     setBlocks([...blocks, createBlock()]);
   }
 
-  const handleImport = (importedBlocks: BlockData[]) => {
+  const handleImport = (
+    importedStartTime: string,
+    importedBlocks: BlockData[],
+  ) => {
+    setStartTime(importedStartTime);
     setBlocks(importedBlocks);
   };
 
@@ -188,7 +192,11 @@ export function Settings({
             Submit
           </button>
         </div>
-        <CsvControl blocks={blocks} onImport={handleImport} />
+        <CsvControl
+          blocks={blocks}
+          startTime={startTime}
+          onImport={handleImport}
+        />
       </div>
 
       {showInfo && <InfoModal onClose={() => setShowInfo(false)} />}

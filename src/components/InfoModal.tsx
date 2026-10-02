@@ -67,8 +67,8 @@ export function InfoModal({ onClose }: InfoModalProps) {
           <ul className='text-sm text-left flex flex-col gap-1 list-disc pl-5'>
             <li>
               Export your schedule as a CSV file to save it or share it with
-              others. It will save the name, duration, color, and unique id of
-              each block in your schedule.
+              others. It will save the start time, name, duration, color, and
+              unique id of each block in your schedule.
               <li>
                 Import a previously exported schedule to quickly set up a new
                 day.
@@ -80,9 +80,7 @@ export function InfoModal({ onClose }: InfoModalProps) {
               Notepad.
             </li>
             <li>
-              The CSV format allows for easy schedule making in a spreadsheet,
-              but it doesn't support the start time. You'll need to set that
-              manually after importing.
+              The CSV format allows for easy schedule making in a spreadsheet.
             </li>
             <li>
               When creating a new entry in the spreadsheet, it is recommended to
@@ -93,6 +91,11 @@ export function InfoModal({ onClose }: InfoModalProps) {
             <li>A bit about each column:</li>
             <ul className='text-sm text-left flex flex-col gap-1 list-disc pl-5'>
               <li>
+                <span className='font-extrabold'>Id:</span> A unique identifier
+                for the block. This is automatically generated and should not be
+                changed. Leave blank if creating a new block in the spreadsheet.
+              </li>
+              <li>
                 <span className='font-extrabold'>Name:</span> The name of the
                 activity.
               </li>
@@ -102,11 +105,6 @@ export function InfoModal({ onClose }: InfoModalProps) {
                 <span className='counter'>00:45</span>.
               </li>
               <li>
-                <span className='font-extrabold'>Id:</span> A unique identifier
-                for the block. This is automatically generated and should not be
-                changed. Leave blank if creating a new block in the spreadsheet.
-              </li>
-              <li>
                 <span className='font-extrabold'>Color:</span> The color of the
                 block in the schedule. This is automatically generated and
                 should not be changed. Leave blank if creating a new block in
@@ -114,6 +112,10 @@ export function InfoModal({ onClose }: InfoModalProps) {
                 Hexcode color value.
               </li>
             </ul>
+            <li>
+              The start time is saved in the first row of the CSV file and will
+              accept 24-hour format (e.g., 15:00 is 3:00 PM).
+            </li>
           </ul>
         </div>
 

@@ -5,22 +5,32 @@ import { saveSession } from "../data/storage";
 
 type CsvControlProps = {
   blocks: BlockData[];
-  onImport: (blocks: BlockData[]) => void;
+  startTime: string;
+  onImport: (startTime: string, blocks: BlockData[]) => void;
 };
 
 function getRandomColor(): string {
   return "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0");
 }
 
-export function CsvControl({ blocks, onImport }: CsvControlProps) {
+export function CsvControl({ blocks, startTime, onImport }: CsvControlProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImportCsv = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImportCsv = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
 
-    if (!file) return;
+    if (!file || file.size === 0) return; // if the file is empty or not selected, do nothing
 
-    Papa.parse<BlockData>(file, {
+    const text = await file.text();
+
+    if (!text.trim()) return; // if the file is empty or only whitespace, do nothing
+
+    const [firstLine = "", ...rest] = text.split(/\r?\n/); // gets the 1st line then passes it to papaparse to parse the rest of the csv
+    const importedStartTime: string | undefined = firstLine.split(",")[1];
+
+    Papa.parse<BlockData>(rest.join("\n"), {
       header: true,
       skipEmptyLines: true,
 
@@ -28,7 +38,6 @@ export function CsvControl({ blocks, onImport }: CsvControlProps) {
         if (result.errors.length > 0) {
           console.error("CSV import warnings:", result.errors);
         }
-
         const importedBlocks: BlockData[] = result.data.map((block) => ({
           id:
             typeof block.id === "string" && block.id.trim() !== ""
@@ -44,16 +53,16 @@ export function CsvControl({ blocks, onImport }: CsvControlProps) {
 
         const importedSession = {
           blocks: importedBlocks,
-          startTime: "",
+          startTime: importedStartTime,
         };
 
         saveSession(importedSession);
 
         // Updates the parent component's state
-        onImport(importedBlocks);
+        onImport(importedStartTime, importedBlocks);
       },
 
-      error: (error) => {
+      error: (error: Error) => {
         console.error("CSV import failed:", error);
       },
     });
@@ -68,6 +77,8 @@ export function CsvControl({ blocks, onImport }: CsvControlProps) {
       return `"${stringValue.replace(/"/g, '""')}"`;
     };
 
+    const csvStartTime = "startTime," + startTime;
+    console.log("Exporting CSV with start time:", csvStartTime);
     const csvHeader = ["id", "name", "color", "duration"]
       .map(escapeCsvValue)
       .join(",");
@@ -78,7 +89,7 @@ export function CsvControl({ blocks, onImport }: CsvControlProps) {
         .join(","),
     );
 
-    const csvContent = [csvHeader, ...csvRows].join("\r\n");
+    const csvContent = [csvStartTime, csvHeader, ...csvRows].join("\r\n");
 
     const blob = new Blob([csvContent], {
       type: "text/csv;charset=utf-8;",
